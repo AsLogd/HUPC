@@ -5,12 +5,12 @@ var io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-app.get('/receiver', function(req, res){
-  res.sendFile(__dirname + '/receiver.html');
+app.get('/display', function(req, res){
+  res.sendFile(__dirname + '/display.html');
 });
 
-app.get('/sender', function(req, res){
-  res.sendFile(__dirname + '/sender.html');
+app.get('/vhand', function(req, res){
+  res.sendFile(__dirname + '/vhand.html');
 });
 
 app.get('/move', function(req, res){
