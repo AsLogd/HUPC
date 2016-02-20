@@ -32,7 +32,7 @@
     var camera, scene, renderer;
     var effect, controls;
     var element, container;
-	var loader = new THREE.JSONLoader(); // init the loader util
+	var loader = new THREE.JSONLoader();
     var clock = new THREE.Clock();	
     init();
     animate();
@@ -167,6 +167,8 @@ function createText(text, x, y, z) {
       window.addEventListener('resize', resize, false);
       setTimeout(resize, 1);
 	  
+	  
+	  //-----------mas modelos-----------
 	  addRoom();	
 	  addEye();
 	  //addCalc();
@@ -175,85 +177,77 @@ function createText(text, x, y, z) {
 	  addNotebook();
 	  addMB();
 	  addEstante();
-	  
+	  addPlant();
+	  addBox();
 	  addLights();
 	  addSkyBox();
 	}
 	
+	function addBox(){
+		loader.load('models/box/box.js', function (geometry) {
+			var material = new THREE.MeshLambertMaterial({
+				map: THREE.ImageUtils.loadTexture('models/box/crate_1.jpg')});
+			var mesh = new THREE.Mesh(
+				geometry,
+				material
+			);
+			mesh.rotation.y = -Math.PI/5;
+			mesh.position.set(-5,5,-5)
+			mesh.scale.set(1.3,1.3,1.3)
+			scene.add(mesh);
+			}
+		);
+	
+	}
+	
     function addEye(){
-		// init loading
 		loader.load('models/eye/eye.js', function (geometry) {
-		  // create a new material
-		  var material = new THREE.MeshLambertMaterial({
-			map: THREE.ImageUtils.loadTexture('models/eye/textures/eyeball_COLOR1.png'),		// specify and load the texture
-			colorAmbient: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-			colorDiffuse: [0.480000026226044, 0.480000026226044, 0.480000026226044],
-			colorSpecular: [0.8999999761581421, 0.8999999761581421, 0.8999999761581421]
-		  });
-		  
-		  // create a mesh with models geometry and material
-		  var mesh = new THREE.Mesh(
+		var material = new THREE.MeshLambertMaterial({
+			map: THREE.ImageUtils.loadTexture('models/eye/textures/eyeball_COLOR1.png')
+		});
+		var mesh = new THREE.Mesh(
 			geometry,
 			material
-		  );
-		  
-		  mesh.rotation.y = -Math.PI/5;
-		  mesh.position.x += 10
-		  scene.add(mesh);
-		  }
+		);
+		mesh.rotation.y = -Math.PI/5;
+		mesh.position.set(-30,10,20)
+		scene.add(mesh);
+		}
 		);
 	}
 	
 	function addBB8(){
-		// init loading
 		loader.load('models/bb8/bb8.js', function (geometry) {
-		  // create a new material
-		var materials = []  
-		materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/HEAD diff MAP.jpg') } ));
-		materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/Head ring diff MAP.jpg') } ));
-		materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/head top diff MAP.jpg') } ));
-		materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/BODY diff MAP.jpg') } ));
-		
-		
-		  // create a mesh with models geometry and material
-		   var meshFaceMaterial = new THREE.MeshFaceMaterial( materials );
-		  var mesh = new THREE.Mesh(
-			geometry,
-			meshFaceMaterial
-		  );
-		  
-		  mesh.rotation.y = -Math.PI/5;
-		  mesh.position.x += 50
-		  mesh.scale.set(0.3,0.3,0.3)
-		  scene.add(mesh);
-		  }
+			var materials = []  
+			materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/HEAD diff MAP.jpg') } ));
+			materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/Head ring diff MAP.jpg') } ));
+			materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/head top diff MAP.jpg') } ));
+			materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/bb8/BODY diff MAP.jpg') } ));
+			var meshFaceMaterial = new THREE.MeshFaceMaterial( materials );
+			var mesh = new THREE.Mesh(
+				geometry,
+				meshFaceMaterial
+			);
+			mesh.rotation.y = -Math.PI/5;
+			mesh.position.set(-10,10,20)
+			mesh.scale.set(0.1,0.1,0.1)
+			scene.add(mesh);
+		}
 		);
 	}
 	
 	function addNotebook(){
-		// init loading
 		loader.load('models/notebook/notebook.js', function (geometry) {
-		  // create a new material
-		  
-		var material = new THREE.MeshLambertMaterial({
-			map: THREE.ImageUtils.loadTexture('models/notebook/Bake_Col_3.jpg')});
-							
-		//var materials = []  
-		//materials.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture('models/notebook/Bake_Col_3.jpg') } ));
-	//	materials.push(new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture('models/notebook/Desktop.png') } ));
-	//	materials.push(new THREE.MeshPhongMaterial( { map: THREE.ImageUtils.loadTexture('models/notebook/Bake_Ao.png') } ));
-		  // create a mesh with models geometry and material
-		 //  var meshFaceMaterial = new THREE.MeshFaceMaterial( materials );
-		  var mesh = new THREE.Mesh(
-			geometry,
-			material
-		  );
-		  
-		  mesh.rotation.y = -Math.PI/5;
-		  mesh.position.x -= 5
-		  //mesh.scale.set(0.5,0.5,0.5)
-		  scene.add(mesh);
-		  }
+			var material = new THREE.MeshLambertMaterial({
+				map: THREE.ImageUtils.loadTexture('models/notebook/Bake_Col_3.jpg')});
+			var mesh = new THREE.Mesh(
+				geometry,
+				material
+			);
+			mesh.rotation.y = -Math.PI/5;
+			mesh.position.set(10,10,20)
+			scene.add(mesh);
+		}
 		);
 	}
 	
@@ -267,8 +261,8 @@ function createText(text, x, y, z) {
 			material
 		  );			  
 		  mesh.rotation.y = -Math.PI/5;
-		  mesh.position.z += 30
-		  mesh.scale.set(0.1,0.1,0.1)
+		  mesh.position.set(30,10,20)
+		  mesh.scale.set(0.05,0.05,0.05)
 		  scene.add(mesh);
 		  }
 			);
@@ -306,10 +300,11 @@ function createText(text, x, y, z) {
 	}
 	
 	function addEstante(){
-		var geometry = new THREE.BoxGeometry( 30, 6, 6 );
-		var material = new THREE.MeshBasicMaterial( { color: 0x3F3F3F, map: THREE.ImageUtils.loadTexture('textures/metal.jpg')} );
+		var geometry = new THREE.BoxGeometry( 80, 6, 6 );
+		texture = THREE.ImageUtils.loadTexture('textures/metal.jpg');
+		var material = new THREE.MeshBasicMaterial( { color: 0x3F3F3F, map: texture} );
 		var cube = new THREE.Mesh( geometry, material );
-		cube.position.set(20,6,20)
+		cube.position.set(0,6,20)
 		scene.add( cube );
 
 	}
@@ -368,6 +363,25 @@ function createText(text, x, y, z) {
 		scene.add( skyBox );
 	
 	}
+	
+	function addPlant(){
+		loader.load('models/plant/plant.js', function (geometry) {
+			 
+			var material = new THREE.MeshLambertMaterial({
+				map: THREE.ImageUtils.loadTexture('models/plant/MARBLE_1.jpg')});
+		  var mesh = new THREE.Mesh(
+			geometry,
+			material
+		  );			  
+		  mesh.rotation.y = -Math.PI/5;
+		  mesh.position.set(3,1,-20)
+		  mesh.scale.set(0.05,0.05,0.05)
+		  scene.add(mesh);
+		  }
+			);
+	
+	}
+	
 	/** USELESS (ENORME, NO ME FUNCIONA EL SCALE)*/
 	function addCalc(){
 		// init loading
