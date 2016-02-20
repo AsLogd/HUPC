@@ -37,6 +37,10 @@
     var clock = new THREE.Clock();
     var gyro = {x:0,y:0,z:0,w:0};
 
+    var player;
+    var playerSpeed = 1000;
+    var playerVector = {x:0,y:0};
+
     init();
     animate();
 
@@ -108,7 +112,7 @@ function createText(text, x, y, z) {
     {
       return {"x":q.x,"y":q.y,"z":q.z,"w": -q.w};
     }
-var player;
+
     function init() {
       var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
       var socket = io();
@@ -123,6 +127,10 @@ var player;
         targetCube.setRotationFromQuaternion(quot);
         targetCube.rotation.y += camera.rotation.y;
 
+      });
+
+      socket.on("move", function(moveVector){
+        playerVector = moveVector;
       });
 
       Physijs.scripts.worker = '/js/physijs_worker.js';
@@ -260,6 +268,10 @@ scene.add( ground );
 
     function animate(t) {
       requestAnimationFrame(animate);
+      //var vectorOK = new THREE.Vector3(playerVector.x, 0, playerVector.y);
+      //vectorOK.multiplyScalar(playerSpeed);
+      //vectorOK.multiplyScalar(clock.getDelta());
+     // player.setLinearVelocity(vectorOK);
       scene.simulate(); // run physics
       update(clock.getDelta());
       render(clock.getDelta());

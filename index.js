@@ -13,6 +13,10 @@ app.get('/sender', function(req, res){
   res.sendFile(__dirname + '/sender.html');
 });
 
+app.get('/move', function(req, res){
+  res.sendFile(__dirname + '/move.html');
+});
+
 io.on('connection', function(socket){
   console.log('a user connected');
   
@@ -22,8 +26,13 @@ io.on('connection', function(socket){
   });
 
    socket.on('rotation', function(o){
-    console.log('Rotacion: (x:' + o.beta + ',y:' + o.gamma + ',z:' + o.alpha);
+    //console.log('Rotacion: (x:' + o.beta + ',y:' + o.gamma + ',z:' + o.alpha);
     socket.broadcast.emit("rotation", o);
+  });
+
+   socket.on('move', function(moveVector){
+    //console.log('Recibido: ' + msg);
+    socket.broadcast.emit("move", moveVector);
   });
 
 });
