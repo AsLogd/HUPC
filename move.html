@@ -30,18 +30,13 @@
         e.preventDefault();
         e.stopPropagation();
         var touch = e.touches[0];
-       // alert("X:" + touch.pageX + ", Y:" + touch.pageY);
         var moveVector = {x:0, y:0};
         moveVector.x = map(0, screenWidth, -1,1, touch.pageX);
         moveVector.y = -map(0, screenHeight, 1,-1, touch.pageY);
-        //alert( "X:" + moveVector.x+ ", Y:" + moveVector.y);
+
         socket.emit('move', moveVector);
-        //moveVector.x = 
 
-       // touch.pageX
-        //touch.pageY
       }
-
     </script>
   </body>
 </html>

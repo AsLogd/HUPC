@@ -125,8 +125,6 @@ function createText(text, x, y, z) {
         quot.set(q.x,q.y,q.z,q.w);
 
         targetCube.setRotationFromQuaternion(quot);
-        targetCube.rotation.y += camera.rotation.y;
-
       });
 
       socket.on("move", function(moveVector){
@@ -239,7 +237,7 @@ scene.add( ground );
             new THREE.CylinderGeometry(  5, 5, 5, 32  ),
            playermaterial
         );
-        player.rotation.y = 90;
+        //player.rotation.y = 90; GUILLE
         player.position.set(0, 20, 0);
         scene.add( player );
         player.add(camera);
@@ -276,7 +274,8 @@ scene.add( ground );
 
     function animate(t) {
       requestAnimationFrame(animate);
-      var vectorOK = new THREE.Vector3(playerVector.x, 0, playerVector.y);
+      var vectorOK = new THREE.Vector3(-playerVector.y, 0, playerVector.x);
+    // var vectorOK = new THREE.Vector3(1,0,0);
       vectorOK.multiplyScalar(playerSpeed);
       vectorOK.multiplyScalar(clock.getDelta());
       vectorOK.y = (player.getLinearVelocity()).y;
@@ -284,6 +283,7 @@ scene.add( ground );
       scene.simulate(); // run physics
       update(clock.getDelta());
       render(clock.getDelta());
+      console.log(controls.object.rotation);
     }
 
     function fullscreen() {

@@ -19,11 +19,6 @@ app.get('/move', function(req, res){
 
 io.on('connection', function(socket){
   console.log('a user connected');
-  
-  socket.on('chat message', function(msg){
-    console.log('Recibido: ' + msg);
-    socket.broadcast.emit("chat message", msg);
-  });
 
    socket.on('rotation', function(o){
     //console.log('Rotacion: (x:' + o.beta + ',y:' + o.gamma + ',z:' + o.alpha);
