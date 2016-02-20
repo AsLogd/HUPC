@@ -115,11 +115,14 @@ function createText(text, x, y, z) {
       
       
       socket.on("rotation", function(rotation){
+      
         gyro = computeQuaternionFromEulers(rotation.alpha, rotation.beta, rotation.gamma);
         var q = computeOrientationQuaternion();
         var quot = new THREE.Quaternion();
         quot.set(q.x,q.y,q.z,q.w);
+
         targetCube.setRotationFromQuaternion(quot);
+        targetCube.rotation.y += camera.rotation.y;
 
       });
       renderer = new THREE.WebGLRenderer();
@@ -188,8 +191,11 @@ function createText(text, x, y, z) {
 
       ////ROTATIONAL CUBE
       scene.add(targetCube);
-      targetCube.position.x = -10;
-      targetCube.position.y = 5;
+      camera.add(targetCube);
+      //targetCube.rotation.reorder('YXZ');
+      targetCube.position.z = -8.5;
+      targetCube.position.x = 4;
+      targetCube.position.y = -4;
 
 
 
