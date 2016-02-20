@@ -4,11 +4,21 @@
     <title>Sender</title>
     <script src="/socket.io/socket.io.js"></script>
     <script src="js/third-party/threejs/three.js"></script>
+
   </head>
   <body>
     <script>
       var socket = io();
       window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
+      document.addEventListener('touchstart', handleTouchEventStart, false);
+      document.addEventListener('touchend', handleTouchEventEnd, true);
+      var force;
+      function handleTouchEventStart(evt){
+        socket.emit("pick");
+      }
+      function handleTouchEventEnd(evt){
+        socket.emit("drop");
+      }
       var rotation = {alpha:"", beta:"", gamma:""};
        function onDeviceOrientationChangeEvent(evt){
         
@@ -21,6 +31,7 @@
       setInterval(function(){
         socket.emit('rotation', rotation);
       },100);
+
 
     </script>
   </body>

@@ -29,6 +29,23 @@ io.on('connection', function(socket){
     //console.log('Recibido: ' + msg);
     socket.broadcast.emit("move", moveVector);
   });
+   socket.on('pick', function(){
+    //console.log('Recibido: ' + msg);
+    socket.broadcast.emit("pick");
+  });
+   socket.on('drop', function(){
+    //console.log('Recibido: ' + msg);
+    socket.broadcast.emit("drop");
+  });
+   socket.on('throw', function(){
+    //console.log('Recibido: ' + msg);
+    socket.broadcast.emit("throw");
+  });
+
+   socket.on('screenTapped', function(istapped){
+    //console.log('Recibido: ' + msg);
+    socket.broadcast.emit("screenTapped", istapped);
+  });
 
 });
 

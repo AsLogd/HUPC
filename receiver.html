@@ -38,43 +38,15 @@
     var gyro = {x:0,y:0,z:0,w:0};
 
     var player;
+    var hand;
+    var objtopick;
+    var objectPicked = false;
     var playerSpeed = 1000;
     var playerVector = {x:0,y:0};
     var raycastableObjects = [];
 
     init();
     animate();
-
-function createText(text, x, y, z) {
-
-        textGeo = new THREE.TextGeometry( text, {
-
-          font: 'optimer',
-
-          size: 10,
-          height: 5
-
-        });
-
-        textGeo.computeBoundingBox();
-        textGeo.computeVertexNormals();  
-
-        var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
-
-        var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
-        textMesh1 = new THREE.Mesh( textGeo, material );
-
-        textMesh1.position.x = x;
-        textMesh1.position.y = y;
-        textMesh1.position.z = z;
-
-        textMesh1.rotation.x = 0;
-        textMesh1.rotation.y = -90;
-
-        scene.add( textMesh1 );
-
-
-      }
 
     function computeQuaternionFromEulers(alpha, beta, gamma){
       var degtorad = Math.PI / 180;
@@ -116,18 +88,20 @@ function createText(text, x, y, z) {
 
     function init() {
 
-      var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
+      //var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
+      hand = null;
       var socket = io();
       
-      socket.on("rotation", function(rotation){
-      
-        gyro = computeQuaternionFromEulers(rotation.alpha, rotation.beta, rotation.gamma);
-        var q = computeOrientationQuaternion();
-        var quot = new THREE.Quaternion();
-        quot.set(q.x,q.y,q.z,q.w);
+      if(objectPicked){
+          socket.on("rotation", function(rotation){
+            gyro = computeQuaternionFromEulers(rotation.alpha, rotation.beta, rotation.gamma);
+            var q = computeOrientationQuaternion();
+            var quot = new THREE.Quaternion();
+            quot.set(q.x,q.y,q.z,q.w);
 
-        targetCube.setRotationFromQuaternion(quot);
-      });
+            hand.setRotationFromQuaternion(quot);
+          });
+      }
 
       socket.on("move", function(moveVector){
         playerVector = moveVector;
@@ -210,24 +184,26 @@ scene.add( ground );
       scene.add(mesh);
 */
       ////ROTATIONAL CUBE
-      scene.add(targetCube);
-      camera.add(targetCube);
-      //targetCube.rotation.reorder('YXZ');
-      targetCube.position.z = -12;
-      targetCube.position.x = 1;
-      targetCube.position.y = -1;
+        objtopick = new Physijs.BoxMesh(
+            new THREE.CubeGeometry( 6, 6, 6 ),
+            new THREE.MeshBasicMaterial({ color: 0x888888 })
+        );
+        objtopick.position.set(20, 10, 0);
+        scene.add( objtopick );
+        raycastableObjects.push(objtopick);
+
+        //targetCube.rotation.reorder('YXZ');
+/*        objtopick.position.z = -12;
+        objtopick.position.x = 1;
+        hand.position.y = -1;*/
+      
       ////---ROTATIONAL CUBE
 
       ///TEST PHYSICS CUBE
       // Box
 
-        var box = new Physijs.BoxMesh(
-            new THREE.CubeGeometry( 2, 2, 2 ),
-            new THREE.MeshBasicMaterial({ color: 0x888888 })
-        );
-        box.position.set(20, 10, 0);
-        scene.add( box );
-        raycastableObjects.push(box);
+
+      
       //PLAYER
 
       var playermaterial = Physijs.createMaterial(
@@ -237,11 +213,11 @@ scene.add( ground );
       );
 
         player = new Physijs.CylinderMesh(
-            new THREE.CylinderGeometry(  5, 5, 5, 32  ),
+            new THREE.CylinderGeometry(  1, 1, 1, 32  ),
            playermaterial
         );
         //player.rotation.y = 90; GUILLE
-        player.position.set(0, 20, 0);
+        player.position.set(0, 5, 0);
         scene.add( player );
         player.add(camera);
         player.setAngularFactor(new THREE.Vector3(0,0,0));
@@ -269,6 +245,19 @@ scene.add( ground );
       camera.updateProjectionMatrix();
       
       controls.update(dt);
+
+      var distancetopick = 13;
+      var dist = (player.position).distanceTo(objtopick.position);
+      console.log(dist);
+
+      var matNormal = new THREE.MeshBasicMaterial({ color: 0x888888 });
+      var matNear = new THREE.MeshBasicMaterial({ color: 0xE1D46B });
+      if(dist <= distancetopick){
+        objtopick.material = matNear;
+      } else{
+        objtopick.material = matNormal; 
+      }
+      
     }
 
     function render(dt) {
@@ -276,10 +265,9 @@ scene.add( ground );
     }
 
     function animate(t) {
+     // player.rotation.y = camera.rotation.y;
       requestAnimationFrame(animate);
-
       var vectorOK = new THREE.Vector3(-playerVector.y, 0, playerVector.x);
-    // var vectorOK = new THREE.Vector3(1,0,0);
       vectorOK.multiplyScalar(playerSpeed);
       vectorOK.multiplyScalar(clock.getDelta());
       vectorOK.y = (player.getLinearVelocity()).y;
@@ -290,7 +278,6 @@ scene.add( ground );
       scene.simulate(); // run physics
       update(clock.getDelta());
       render(clock.getDelta());
-      console.log(controls.object.rotation);
     }
 
     function fullscreen() {
