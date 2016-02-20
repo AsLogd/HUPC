@@ -70,7 +70,7 @@ function createText(text, x, y, z) {
       }
 
     function init() {
-      var targetCube = new THREE.Mesh(new THREE.CubeGeometry(2, 2, 2), new THREE.MeshNormalMaterial());
+      var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
       
 
       var socket = io();
@@ -150,6 +150,8 @@ function createText(text, x, y, z) {
 
       ////ROTATIONAL CUBE
       scene.add(targetCube);
+      targetCube.position.x = -10;
+      targetCube.position.y = 5;
 
 
 
