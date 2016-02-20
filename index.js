@@ -21,8 +21,8 @@ io.on('connection', function(socket){
   });
 
    socket.on('rotation', function(rot){
-    console.log('Rotacion: ' + msg);
-    socket.broadcast.emit("chat message", msg);
+    console.log('Rotacion: ' + rot);
+    socket.broadcast.emit("chat message", rot);
   });
 });
 
