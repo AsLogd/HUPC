@@ -228,14 +228,22 @@ scene.add( ground );
         box.position.set(20, 10, 0);
         scene.add( box );
       //PLAYER
+
+      var playermaterial = Physijs.createMaterial(
+      new THREE.Material({ transparent:true }),
+      5,
+      0.2
+      );
+
         player = new Physijs.CylinderMesh(
             new THREE.CylinderGeometry(  5, 5, 5, 32  ),
-            new THREE.Material({ transparent:true})
+           playermaterial
         );
+        player.rotation.y = 90;
         player.position.set(0, 20, 0);
         scene.add( player );
         player.add(camera);
-        player.setAngularFactor(new THREE.Vector3(0,0,1));
+        player.setAngularFactor(new THREE.Vector3(0,0,0));
 
 
 
@@ -268,10 +276,11 @@ scene.add( ground );
 
     function animate(t) {
       requestAnimationFrame(animate);
-      //var vectorOK = new THREE.Vector3(playerVector.x, 0, playerVector.y);
-      //vectorOK.multiplyScalar(playerSpeed);
-      //vectorOK.multiplyScalar(clock.getDelta());
-     // player.setLinearVelocity(vectorOK);
+      var vectorOK = new THREE.Vector3(playerVector.x, 0, playerVector.y);
+      vectorOK.multiplyScalar(playerSpeed);
+      vectorOK.multiplyScalar(clock.getDelta());
+      vectorOK.y = (player.getLinearVelocity()).y;
+      player.setLinearVelocity(vectorOK);
       scene.simulate(); // run physics
       update(clock.getDelta());
       render(clock.getDelta());
