@@ -3,7 +3,6 @@
   <head>
     <title>Sender</title>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
       form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
       form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
@@ -11,39 +10,125 @@
       #messages { list-style-type: none; margin: 0; padding: 0; }
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
-    </style>
+    </style> 
     <script src="/socket.io/socket.io.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="js/third-party/threejs/three.js"></script>
 	<script src="js/gyro.js"></script>
+	<script src="js/jgestures.js"></script>
   </head>
-  <body>
-    <ul id="messages"></ul>
-    <form id="asdf" action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
+  <body id = "control" >
+  <!--
+  <div id = "control" style="height:100%">
+	  
+		<ul id="messages"></ul>
+		<form id="asdf" action="">
+		  <input id="m" autocomplete="off" /><button>Send</button>
+		</form>
+		<div id ="up" style="height:33%">
+			UP
+		</div>
+		<table style="height:33%; width:100%" >
+			<tr>
+				<td >
+					<div id ="left" style="height:100%; width:100%">
+					LEFT	
+					</div>
+				</td>
+				<td >
+					<div id ="right" style="height:100%; width:100%">
+					RIGHT	
+					</div>
+				</td>
+			</tr>
+		</table>
+		<div id ="down" style="height:33%">
+			DOWN
+		</div>
+	</div>
+	 -->
     <script>
       var socket = io();
+	  var T = [$(window).width()/2.0,$(window).height()/2.0]
       var form = document.getElementById("asdf");
       window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
-
        function onDeviceOrientationChangeEvent(evt){
-        alert(JSON.stringify(evt));
+      
         var rotation = {alpha:"", beta:"", gamma:""};
         rotation.alpha = evt.gamma ? evt.alpha : 0; // Z
         rotation.beta = evt.beta ? evt.beta : 0; // X'
         rotation.gamma = evt.gamma ? evt.gamma : 0; // Y''
-        socket.emit('rotation', rotation);
+      //  socket.emit('rotation', rotation);
       }
+		$(document).on("touchmove", function(evt){
+			console.log(evt)
+			x = evt.originalEvent.changedTouches[0].clientX
+			y = evt.originalEvent.changedTouches[0].clientY
+			p = [x-T[0],-(y-T[1])]
+			socket.emit('move', p);
+		});
 
-
-
+		/*function onLoad(){
+			gyro.frequency = 100;
+			gyro.startTracking(function(o) {
+				socket.emit('traslation', {x : o.x, y : o.y, z : o.z -9.8});
+				})
+		}*/
+/*
+		$('#up').on('touchstart touchend vmousemove', function mouseState(e) {
+			if (e.type == "touchstart") {
+				console.log("up");
+				socket.emit('moving_up')
+			}
+			else if (e.type == "touchend"){
+				console.log("no up")
+				socket.emit('stop_moving')
+			}
+			else if (e.type == "vmousemove"){
+				console.log(e.pageX + " " + e.pageY)				
+			}
+		}
+		)
+		$('#left').on('touchstart touchend', function mouseState(e) {
+			if (e.type == "touchstart") {
+				console.log("left");
+				socket.emit('moving_left')
+			}
+			else if (e.type == "touchend"){
+				console.log("no left")
+				socket.emit('stop_moving')
+			}
+		}
+		)
+		$('#right').on('touchstart touchend', function mouseState(e) {
+			if (e.type == "touchstart") {
+				console.log("right");
+				socket.emit('moving_right')
+			}
+			else if (e.type == "touchend"){
+				console.log("no right")
+				socket.emit('stop_moving')
+			}
+		}
+		)
+		$('#down').on('touchstart touchend', function mouseState(e) {
+			if (e.type == "touchstart") {
+				console.log("down");
+				socket.emit('moving_down')
+			}
+			else if (e.type == "touchend"){
+				console.log("no down")
+				socket.emit('stop_moving')
+			}
+		}
+		)
 
       form.addEventListener('submit', function(evt){
         evt.preventDefault();
         socket.emit('chat message', document.getElementById("m").value);
         document.getElementById("m").value = "";
         return false;
-      }, false);
+      }, false);*/
 
     </script>
   </body>
