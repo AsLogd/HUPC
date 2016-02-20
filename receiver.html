@@ -108,12 +108,10 @@ function createText(text, x, y, z) {
     {
       return {"x":q.x,"y":q.y,"z":q.z,"w": -q.w};
     }
-
+var player;
     function init() {
       var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
       var socket = io();
-
-      
       
       socket.on("rotation", function(rotation){
       
@@ -126,14 +124,18 @@ function createText(text, x, y, z) {
         targetCube.rotation.y += camera.rotation.y;
 
       });
-      renderer = new THREE.WebGLRenderer();
+
+      Physijs.scripts.worker = '/js/physijs_worker.js';
+      Physijs.scripts.ammo = '/js/ammo.js';
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
       element = renderer.domElement;
       container = document.getElementById('example');
       container.appendChild(element);
 
       effect = new THREE.StereoEffect(renderer);
 
-      scene = new THREE.Scene();
+      scene = new Physijs.Scene;
 
       camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
       camera.position.set(0, 10, 0);
@@ -184,12 +186,21 @@ function createText(text, x, y, z) {
         map: texture
       });
 
+var ground = new Physijs.PlaneMesh(
+            new THREE.PlaneGeometry( 1000, 1000 ),
+            material,
+            0
+        );
+ground.rotation.x = -Math.PI / 2;
+scene.add( ground );
+/*
       var geometry = new THREE.PlaneGeometry(1000, 1000);
+
 
       var mesh = new THREE.Mesh(geometry, material);
       mesh.rotation.x = -Math.PI / 2;
       scene.add(mesh);
-
+*/
       ////ROTATIONAL CUBE
       scene.add(targetCube);
       camera.add(targetCube);
@@ -197,10 +208,28 @@ function createText(text, x, y, z) {
       targetCube.position.z = -12;
       targetCube.position.x = 1;
       targetCube.position.y = -1;
-
-
-
       ////---ROTATIONAL CUBE
+
+      ///TEST PHYSICS CUBE
+      // Box
+
+        var box = new Physijs.BoxMesh(
+            new THREE.CubeGeometry( 2, 2, 2 ),
+            new THREE.MeshBasicMaterial({ color: 0x888888 })
+        );
+        box.position.set(20, 10, 0);
+        scene.add( box );
+      //PLAYER
+        player = new Physijs.CylinderMesh(
+            new THREE.CylinderGeometry(  5, 5, 5, 32  ),
+            new THREE.Material({ transparent:true})
+        );
+        player.position.set(0, 20, 0);
+        scene.add( player );
+        player.add(camera);
+        player.setAngularFactor(new THREE.Vector3(0,0,1));
+
+
 
       window.addEventListener('resize', resize, false);
       setTimeout(resize, 1);
@@ -221,7 +250,7 @@ function createText(text, x, y, z) {
       resize();
 
       camera.updateProjectionMatrix();
-
+      
       controls.update(dt);
     }
 
@@ -231,7 +260,7 @@ function createText(text, x, y, z) {
 
     function animate(t) {
       requestAnimationFrame(animate);
-
+      scene.simulate(); // run physics
       update(clock.getDelta());
       render(clock.getDelta());
     }
