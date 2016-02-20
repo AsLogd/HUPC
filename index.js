@@ -15,15 +15,17 @@ app.get('/sender', function(req, res){
 
 io.on('connection', function(socket){
   console.log('a user connected');
+  
   socket.on('chat message', function(msg){
     console.log('Recibido: ' + msg);
     socket.broadcast.emit("chat message", msg);
   });
 
-   socket.on('rotation', function(rot){
-    console.log('Rotacion: ' + rot);
-    socket.broadcast.emit("chat message", rot);
+   socket.on('rotation', function(o){
+    console.log('Rotacion: (x:' + o.x + ',y:' + o.y + ',z:' + o.z);
+    socket.broadcast.emit("rotation", o);
   });
+
 });
 
 http.listen(3000, function(){
