@@ -6,17 +6,22 @@ var io = require('socket.io')(http);
 app.use(express.static('public'));
 
 app.get('/receiver', function(req, res){
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/receiver.html');
 });
 
 app.get('/sender', function(req, res){
-  res.sendFile(__dirname + '/index2.html');
+  res.sendFile(__dirname + '/sender.html');
 });
 
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('chat message', function(msg){
     console.log('Recibido: ' + msg);
+    socket.broadcast.emit("chat message", msg);
+  });
+
+   socket.on('rotation', function(rot){
+    console.log('Rotacion: ' + msg);
     socket.broadcast.emit("chat message", msg);
   });
 });
