@@ -38,8 +38,8 @@
     var gyro = {x:0,y:0,z:0,w:0};
 
     var player;
-    var hand;
     var objtopick;
+    var canPick = false;
     var objectPicked = false;
     var playerSpeed = 1000;
     var playerVector = {x:0,y:0};
@@ -88,25 +88,37 @@
 
     function init() {
 
-      //var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.MeshNormalMaterial());
+      var targetCube = new THREE.Mesh(new THREE.CubeGeometry(4, 4, 4), new THREE.Material({transparent:true}));
       hand = null;
       var socket = io();
       
-      if(objectPicked){
-          socket.on("rotation", function(rotation){
-            gyro = computeQuaternionFromEulers(rotation.alpha, rotation.beta, rotation.gamma);
-            var q = computeOrientationQuaternion();
-            var quot = new THREE.Quaternion();
-            quot.set(q.x,q.y,q.z,q.w);
-
-            hand.setRotationFromQuaternion(quot);
-          });
-      }
+      
 
       socket.on("move", function(moveVector){
         playerVector = moveVector;
       });
+      socket.on("pick", function(){
+        if(canPick)
+        {
+          objectPicked = true;
+          targetCube.add(objtopick);
+          objtopick.position.copy(new THREE.Vector3(0,0,0));
+        }
+        });
+      socket.on("drop", function(){
+        if(objectPicked)
+        {
+          scene.updateMatrixWorld();
+          targetCube.updateMatrixWorld();
+          var dropPosition = new THREE.Vector3();
+          dropPosition.setFromMatrixPosition(objtopick.matrixWorld);
+          targetCube.remove(objtopick);
+          objtopick.position.copy( dropPosition);
+          scene.add(objtopick);
+          //objtopick.addCentralImpulse(new THREE.Vector3(10, 2, 0));;
 
+        }
+      });
       Physijs.scripts.worker = '/js/physijs_worker.js';
       Physijs.scripts.ammo = '/js/ammo.js';
 
@@ -118,6 +130,7 @@
       effect = new THREE.StereoEffect(renderer);
 
       scene = new Physijs.Scene;
+      scene.setGravity(new THREE.Vector3(0,-100,0));
 
       camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
       camera.position.set(0, 10, 0);
@@ -132,6 +145,15 @@
       );
       controls.noZoom = true;
       controls.noPan = true;
+
+      socket.on("rotation", function(rotation){
+            gyro = computeQuaternionFromEulers(rotation.alpha, rotation.beta, rotation.gamma);
+            var q = computeOrientationQuaternion();
+            var quot = new THREE.Quaternion();
+            quot.set(q.x,q.y,q.z,q.w);
+
+            targetCube.setRotationFromQuaternion(quot);
+          });
 
       function setOrientationControls(e) {
         if (!e.alpha) {
@@ -191,11 +213,14 @@ scene.add( ground );
         objtopick.position.set(20, 10, 0);
         scene.add( objtopick );
         raycastableObjects.push(objtopick);
+      
 
-        //targetCube.rotation.reorder('YXZ');
-/*        objtopick.position.z = -12;
-        objtopick.position.x = 1;
-        hand.position.y = -1;*/
+        scene.add( targetCube );
+        camera.add(targetCube);
+        targetCube.rotation.reorder('YXZ');
+        targetCube.position.z = -12;
+        targetCube.position.x = 1;
+        targetCube.position.y = -1;
       
       ////---ROTATIONAL CUBE
 
@@ -248,13 +273,15 @@ scene.add( ground );
 
       var distancetopick = 13;
       var dist = (player.position).distanceTo(objtopick.position);
-      console.log(dist);
 
       var matNormal = new THREE.MeshBasicMaterial({ color: 0x888888 });
       var matNear = new THREE.MeshBasicMaterial({ color: 0xE1D46B });
+
       if(dist <= distancetopick){
+        canPick = true;
         objtopick.material = matNear;
       } else{
+        canPick = false;
         objtopick.material = matNormal; 
       }
       
