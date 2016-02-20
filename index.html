@@ -17,6 +17,15 @@
         bottom: 0;
       }
     </style>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+      var count = 1;
+      socket.on("chat message", function(msg){
+        createText(msg, 50, 10*count, 0);
+        count++;
+      });
+    </script>
   </head>
   <body>
     <div id="example"></div>
@@ -25,6 +34,7 @@
   <script src="js/third-party/threejs/StereoEffect.js"></script>
   <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
   <script src="js/third-party/threejs/OrbitControls.js"></script>
+    <script src="/fonts/optimer_regular.typeface.js"></script>
 
   <script>
     var camera, scene, renderer;
@@ -35,6 +45,37 @@
 
     init();
     animate();
+
+function createText(text, x, y, z) {
+
+        textGeo = new THREE.TextGeometry( text, {
+
+          font: 'optimer',
+
+          size: 10,
+          height: 5
+
+        });
+
+        textGeo.computeBoundingBox();
+        textGeo.computeVertexNormals();  
+
+        var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
+
+        var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF});
+        textMesh1 = new THREE.Mesh( textGeo, material );
+
+        textMesh1.position.x = x;
+        textMesh1.position.y = y;
+        textMesh1.position.z = z;
+
+        textMesh1.rotation.x = 0;
+        textMesh1.rotation.y = -90;
+
+        scene.add( textMesh1 );
+
+
+      }
 
     function init() {
       renderer = new THREE.WebGLRenderer();
@@ -149,3 +190,5 @@
   </script>
   </body>
 </html>
+
+

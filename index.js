@@ -5,14 +5,19 @@ var io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-app.get('/', function(req, res){
+app.get('/receiver', function(req, res){
   res.sendFile(__dirname + '/index.html');
+});
+
+app.get('/sender', function(req, res){
+  res.sendFile(__dirname + '/index2.html');
 });
 
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
+    console.log('Recibido: ' + msg);
+    socket.broadcast.emit("chat message", msg);
   });
 });
 
