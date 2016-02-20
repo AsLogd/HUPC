@@ -22,7 +22,7 @@ io.on('connection', function(socket){
   });
 
    socket.on('rotation', function(o){
-    console.log('Rotacion: (x:' + o.x + ',y:' + o.y + ',z:' + o.z);
+    console.log('Rotacion: (x:' + o.beta + ',y:' + o.gamma + ',z:' + o.alpha);
     socket.broadcast.emit("rotation", o);
   });
 

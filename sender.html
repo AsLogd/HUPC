@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Sender</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -13,9 +13,10 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
     <script src="/socket.io/socket.io.js"></script>
+    <script src="js/third-party/threejs/three.js"></script>
 	<script src="js/gyro.js"></script>
   </head>
-  <body onload="onLoad()">
+  <body>
     <ul id="messages"></ul>
     <form id="asdf" action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -23,6 +24,20 @@
     <script>
       var socket = io();
       var form = document.getElementById("asdf");
+      window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
+
+       function onDeviceOrientationChangeEvent(evt){
+        alert(JSON.stringify(evt));
+        var rotation = {alpha:"", beta:"", gamma:""};
+        rotation.alpha = evt.gamma ? evt.alpha : 0; // Z
+        rotation.beta = evt.beta ? evt.beta : 0; // X'
+        rotation.gamma = evt.gamma ? evt.gamma : 0; // Y''
+        socket.emit('rotation', rotation);
+      }
+
+
+
+
       form.addEventListener('submit', function(evt){
         evt.preventDefault();
         socket.emit('chat message', document.getElementById("m").value);
@@ -31,13 +46,5 @@
       }, false);
 
     </script>
-	<script>
-	function onLoad(){
-		gyro.frequency = 100;
-		gyro.startTracking(function(o) {
-			socket.emit('rotation', {x : o.alpha, y : o.beta, z : o.gamma});
-			})
-	}
-	</script>
   </body>
 </html>
