@@ -13,9 +13,9 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
     <script src="/socket.io/socket.io.js"></script>
-	<script src="gyro.js"></script>
+	<script src="js/gyro.js"></script>
   </head>
-  <body>
+  <body onload="onLoad()">
     <ul id="messages"></ul>
     <form id="asdf" action="">
       <input id="m" autocomplete="off" /><button>Send</button>
@@ -32,35 +32,12 @@
 
     </script>
 	<script>
-	var myExtension = {
-		init: function() {
-			// The event can be DOMContentLoaded, pageshow, pagehide, load or unload.
-			document.addEventListener("DOMContentLoaded", this.onPageLoad, false);
-		},
-		onPageLoad: function(aEvent) {
-			alert("asdasd")
-			 // setting gyroscope update frequency
-			  gyro.frequency = 100;
-			// start gyroscope detection
-			  gyro.startTracking(function(o) {
-					socket.emit('rotation', {x : o.x, y : o.y, z : o.z});
-				//	$("#x").text(o.x);
-				//	$("#y").text(o.y);
-			//		$("#z").text(o.z);
-				  // document.getElementById("x").text = o.x;
-				   //document.getElementById("y").text = o.y;
-				   //document.getElementById("z").text = o.z;
-			  };		
-		}
+	function onLoad(){
+		gyro.frequency = 100;
+		gyro.startTracking(function(o) {
+			socket.emit('rotation', {x : o.x, y : o.y, z : o.z});
+			})
 	}
-	// o.x, o.y, o.z for accelerometer
-	// o.alpha, o.beta, o.gamma for gyro
-		}
-	}
-	window.addEventListener("load", function load(event){
-		window.removeEventListener("load", load, false); //remove listener, no longer needed
-		myExtension.init();  
-	},false);
 	</script>
   </body>
 </html>
