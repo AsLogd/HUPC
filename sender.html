@@ -25,17 +25,18 @@
       var socket = io();
       var form = document.getElementById("asdf");
       window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
-
+      var rotation = {alpha:"", beta:"", gamma:""};
        function onDeviceOrientationChangeEvent(evt){
-        alert(JSON.stringify(evt));
-        var rotation = {alpha:"", beta:"", gamma:""};
+        
         rotation.alpha = evt.gamma ? evt.alpha : 0; // Z
         rotation.beta = evt.beta ? evt.beta : 0; // X'
         rotation.gamma = evt.gamma ? evt.gamma : 0; // Y''
-        socket.emit('rotation', rotation);
+
+        
       }
-
-
+      setInterval(function(){
+        socket.emit('rotation', rotation);
+      },40);
 
 
       form.addEventListener('submit', function(evt){
