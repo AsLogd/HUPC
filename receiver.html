@@ -18,14 +18,6 @@
       }
     </style>
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-      var socket = io();
-      var count = 1;
-      socket.on("chat message", function(msg){
-        createText(msg, 50, 10*count, 0);
-        count++;
-      });
-    </script>
   </head>
   <body>
     <div id="example"></div>
@@ -78,6 +70,20 @@ function createText(text, x, y, z) {
       }
 
     function init() {
+      var targetCube = new THREE.Mesh(new THREE.CubeGeometry(2, 2, 2), new THREE.MeshNormalMaterial());
+      
+
+      var socket = io();
+      var count = 1;
+      socket.on("chat message", function(msg){
+        createText(msg, 50, 10*count, 0);
+        count++;
+      });
+      socket.on("rotation", function(rotation){
+        targetCube.rotation.x = rotation.x;
+        targetCube.rotation.y = rotation.y;
+        targetCube.rotation.z = rotation.z;
+      });
       renderer = new THREE.WebGLRenderer();
       element = renderer.domElement;
       container = document.getElementById('example');
@@ -141,6 +147,13 @@ function createText(text, x, y, z) {
       var mesh = new THREE.Mesh(geometry, material);
       mesh.rotation.x = -Math.PI / 2;
       scene.add(mesh);
+
+      ////ROTATIONAL CUBE
+      scene.add(targetCube);
+
+
+
+      ////---ROTATIONAL CUBE
 
       window.addEventListener('resize', resize, false);
       setTimeout(resize, 1);
