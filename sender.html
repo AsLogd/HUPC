@@ -35,7 +35,7 @@
 	function onLoad(){
 		gyro.frequency = 100;
 		gyro.startTracking(function(o) {
-			socket.emit('rotation', {x : o.x, y : o.y, z : o.z});
+			socket.emit('rotation', {x : o.alpha, y : o.beta, z : o.gamma});
 			})
 	}
 	</script>
