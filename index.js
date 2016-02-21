@@ -30,11 +30,11 @@ io.on('connection', function(socket){
   });
 
    socket.on('move', function(moveVector){
-    //console.log('Recibido: ' + msg);
+    console.log('Recibido: move');
     socket.broadcast.emit("move", moveVector);
   });
    socket.on('pick', function(){
-    //console.log('Recibido: ' + msg);
+    console.log('Recibido: pick');
     socket.broadcast.emit("pick");
   });
    socket.on('drop', function(){
