@@ -34,11 +34,11 @@ io.on('connection', function(socket){
     socket.broadcast.emit("pick");
   });
    socket.on('drop', function(){
-    //console.log('Recibido: ' + msg);
+    console.log('Recibido: drop');
     socket.broadcast.emit("drop");
   });
-   socket.on('throw', function(){
-    //console.log('Recibido: ' + msg);
+   socket.on('throw', function(obj){
+    console.log('Recibido: ' + obj.force + ", " + obj.time);
     socket.broadcast.emit("throw");
   });
 

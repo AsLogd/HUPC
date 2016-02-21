@@ -10,15 +10,28 @@
     <script>
       var socket = io();
       window.addEventListener('deviceorientation', onDeviceOrientationChangeEvent, false);
-      document.addEventListener('touchstart', handleTouchEventStart, false);
-      document.addEventListener('touchend', handleTouchEventEnd, true);
       var force;
-      function handleTouchEventStart(evt){
+      var timestamp;
+      var lastY;
+      document.addEventListener('touchstart', function(e){
+        timestamp = Date.now();
+        console.log(e);
+        force = e.touches[0].pageY;
+        lastY = force;
         socket.emit("pick");
-      }
-      function handleTouchEventEnd(evt){
-        socket.emit("drop");
-      }
+      }, false);
+      document.addEventListener('touchmove',function(e){
+        lastY = e.touches[0].pageY;
+      });
+      document.addEventListener('touchend', function(e){
+        timestamp = Date.now() - timestamp;
+        force = Math.abs(force -lastY);
+        if(parseInt(force) < 30)
+          socket.emit("drop");
+        else
+          socket.emit("throw", {force: force, time: timestamp});
+      }, true);
+
       var rotation = {alpha:"", beta:"", gamma:""};
        function onDeviceOrientationChangeEvent(evt){
         
