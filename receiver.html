@@ -20,7 +20,6 @@
     <script src="/socket.io/socket.io.js"></script>
   </head>
   <body>
-  <div id="example"> </div>
   <script src="js/third-party/threejs/three.js"></script>
   <script src="js/third-party/threejs/StereoEffect.js"></script>
   <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
@@ -36,11 +35,14 @@
     var clock = new THREE.Clock();
     var gyro = {x:0,y:0,z:0,w:0};
 
-    var player;
+
     var arrayObjs=[];
+
+
+
+    var player;
     var objtopick;
     var canPick = false;
-    var postopick;
     var objectPicked = false;
     var playerSpeed = 1000;
     var playerVector = {x:0,y:0};
@@ -102,8 +104,8 @@
         if(canPick)
         {
           objectPicked = true;
-          targetCube.add(arrayObjs[postopick]);
-          arrayObjs[postopick].position.copy(new THREE.Vector3(0,0,0));
+          targetCube.add(objtopick);
+          objtopick.position.copy(new THREE.Vector3(0,0,0));
         }
         });
       socket.on("drop", function(){
@@ -112,10 +114,10 @@
           scene.updateMatrixWorld();
           targetCube.updateMatrixWorld();
           var dropPosition = new THREE.Vector3();
-          dropPosition.setFromMatrixPosition(arrayObjs[postopick].matrixWorld);
-          targetCube.remove(arrayObjs[postopick]);
-          arrayObjs[postopick].position.copy( dropPosition);
-          scene.add(arrayObjs[postopick]);
+          dropPosition.setFromMatrixPosition(objtopick.matrixWorld);
+          targetCube.remove(objtopick);
+          objtopick.position.copy( dropPosition);
+          scene.add(objtopick);
           //objtopick.addCentralImpulse(new THREE.Vector3(10, 2, 0));;
 
         }
@@ -127,6 +129,7 @@
       element = renderer.domElement;
       container = document.getElementById('example');
       container.appendChild(element);
+
       effect = new THREE.StereoEffect(renderer);
 
       scene = new Physijs.Scene;
@@ -232,7 +235,7 @@ scene.add( ground );
       );
 
         player = new Physijs.CylinderMesh(
-            new THREE.CylinderGeometry(  1, 3, 1, 32  ),
+            new THREE.CylinderGeometry(  1, 1, 1, 32  ),
            playermaterial
         );
         //player.rotation.y = 90; GUILLE
@@ -248,19 +251,20 @@ scene.add( ground );
     }
 
     function createCubes(){
-      var numCubes = 30;
-      for(var i=0;i<numCubes;i++){
-           arrayObjs.push(new Physijs.BoxMesh(
-            new THREE.CubeGeometry( 7, 7, 7 ),
-            new THREE.MeshBasicMaterial({ color: 0x888888 }), 1, 0));
-          arrayObjs[i].position.set((Math.random()*400)-200, 10, (Math.random()*400)-200);
-          scene.add( arrayObjs[i] );
-          raycastableObjects.push(arrayObjs[i]);
+      numCubes = 6;
+      for(int i=0;i<numCubes;++i){
+           vectorObjs.push(new Physijs.BoxMesh(
+            new THREE.CubeGeometry( 6, 6, 6 ),
+            new THREE.MeshBasicMaterial({ color: 0x888888 })
+            ));
+          vectorObjs[i].position.set(Math.Random()*1000, 10, Math.Random()*1000);
+          scene.add( vectorObjs[i] );
+          raycastableObjects.push(vectorObjs[i]);
 
       }
     }
 
-
+    }
     function resize() {
       var width = container.offsetWidth;
       var height = container.offsetHeight;
@@ -280,28 +284,19 @@ scene.add( ground );
       controls.update(dt);
 
       var distancetopick = 13;
-
-      var dist;
-      var found = false;
-      for(var i=0;i<arrayObjs.length && !canPick;i++){
-        dist = (player.position).distanceTo(arrayObjs[i].position);
-      
+      var dist = (player.position).distanceTo(objtopick.position);
 
       var matNormal = new THREE.MeshBasicMaterial({ color: 0x888888 });
       var matNear = new THREE.MeshBasicMaterial({ color: 0xE1D46B });
 
-        if(dist <= distancetopick){
-          found = true;
-          canPick = true;
-          postopick = i;
-          arrayObjs[i].material = matNear;
-        } else{
-          arrayObjs[i].material = matNormal; 
-        }
-      }
-      if(!found){
+      if(dist <= distancetopick){
+        canPick = true;
+        objtopick.material = matNear;
+      } else{
         canPick = false;
+        objtopick.material = matNormal; 
       }
+      
     }
 
     function render(dt) {
