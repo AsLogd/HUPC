@@ -106,6 +106,7 @@
         if(canPick)
         {
           objectPicked = true;
+          canPick = false;
           targetCube.add(arrayObjs[postopick]);
           arrayObjs[postopick].position.copy(new THREE.Vector3(0,0,0));
         }
@@ -115,7 +116,7 @@
         if(objectPicked)
         {
           objectPicked = false;
-          canPick = false;
+          canPick = true;
           scene.updateMatrixWorld();
           targetCube.updateMatrixWorld();
           var dropPosition = new THREE.Vector3();
