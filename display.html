@@ -26,7 +26,8 @@
   <script src="js/third-party/threejs/DeviceOrientationControls.js"></script>
   <script src="js/third-party/threejs/OrbitControls.js"></script>
   <script src="js/physi.js"></script>
-    <script src="/fonts/optimer_regular.typeface.js"></script>
+  <script src="/fonts/optimer_regular.typeface.js"></script>
+    
 
   <script>
     var camera, scene, renderer;
@@ -38,13 +39,16 @@
 
     var player;
     var arrayObjs=[];
+    var arrayCloseObj=[];
     var objtopick;
     var canPick = false;
     var postopick;
     var objectPicked = false;
-    var playerSpeed = 1000;
+    var playerSpeed = 2000;
     var playerVector = {x:0,y:0};
     var raycastableObjects = [];
+    var matNormal = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("textures/box2.png")});
+    var matNear = new THREE.MeshLambertMaterial({ map: THREE.ImageUtils.loadTexture("textures/box2near.png") });
 
     init();
     animate();
@@ -106,9 +110,11 @@
           arrayObjs[postopick].position.copy(new THREE.Vector3(0,0,0));
         }
         });
+
       socket.on("drop", function(){
         if(objectPicked)
         {
+          objectPicked = false;
           scene.updateMatrixWorld();
           targetCube.updateMatrixWorld();
           var dropPosition = new THREE.Vector3();
@@ -120,10 +126,29 @@
 
         }
       });
+
+      socket.on("throw", function(){
+            if(objectPicked){
+              objectPicked = false;
+              scene.updateMatrixWorld();
+          targetCube.updateMatrixWorld();
+          var dropPosition = new THREE.Vector3();
+          dropPosition.setFromMatrixPosition(arrayObjs[postopick].matrixWorld);
+          targetCube.remove(arrayObjs[postopick]);
+          arrayObjs[postopick].position.copy( dropPosition);
+          scene.add(arrayObjs[postopick]);
+          objtopick.addCentralImpulse(new THREE.Vector3(100, 2, 0));;
+            }
+          });
       Physijs.scripts.worker = '/js/physijs_worker.js';
       Physijs.scripts.ammo = '/js/ammo.js';
 
-      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer = new THREE.WebGLRenderer();
+  
+
+
+
+
       element = renderer.domElement;
       container = document.getElementById('example');
       container.appendChild(element);
@@ -131,7 +156,8 @@
 
       scene = new Physijs.Scene;
       scene.setGravity(new THREE.Vector3(0,-100,0));
-
+      scene.add(new THREE.AxisHelper() );
+      scene.fog = new THREE.FogExp2(0x000000, 0.007);
       camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
       camera.position.set(0, 10, 0);
       scene.add(camera);
@@ -155,6 +181,8 @@
             targetCube.setRotationFromQuaternion(quot);
           });
 
+
+
       function setOrientationControls(e) {
         if (!e.alpha) {
           return;
@@ -171,24 +199,48 @@
       window.addEventListener('deviceorientation', setOrientationControls, true);
 
 
-      var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+      var light = new THREE.HemisphereLight(0x777777, 0x000000, 1);
       scene.add(light);
 
       var texture = THREE.ImageUtils.loadTexture(
-        'textures/patterns/checker.png'
+        "textures/1.jpg"
       );
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat = new THREE.Vector2(50, 50);
+      texture.repeat.set( 80, 80 );
       texture.anisotropy = renderer.getMaxAnisotropy();
+      var texture2 = THREE.ImageUtils.loadTexture(
+        "textures/2.jpg"
+      );
+      texture2.wrapS = THREE.RepeatWrapping;
+      texture2.wrapT = THREE.RepeatWrapping;
+      texture2.repeat.set( 80, 80 );
+      texture2.anisotropy = renderer.getMaxAnisotropy();
+      var texture3 = THREE.ImageUtils.loadTexture(
+        "textures/3.jpg"
+      );
+      texture3.wrapS = THREE.RepeatWrapping;
+      texture3.wrapT = THREE.RepeatWrapping;
+      texture3.repeat.set( 80, 80 );
+      texture3.anisotropy = renderer.getMaxAnisotropy();
+      var texture4 = THREE.ImageUtils.loadTexture(
+        "textures/4.jpg"
+      );
+      texture4.wrapS = THREE.RepeatWrapping;
+      texture4.wrapT = THREE.RepeatWrapping;
+      texture4.repeat.set( 80, 80 );
+      texture4.anisotropy = renderer.getMaxAnisotropy();
 
-      var material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        specular: 0xffffff,
-        shininess: 20,
-        shading: THREE.FlatShading,
-        map: texture
-      });
+var material = new THREE.MeshPhongMaterial( {
+          color: 0xdddddd,
+          specular: 0x222222,
+          shininess: 15,
+          map: texture2,
+          aoMap : texture,
+          normalMap: texture3,
+          specularMap: texture4,
+          normalScale: new THREE.Vector2( 0.8, 0.8)
+        } );
 
 var ground = new Physijs.PlaneMesh(
             new THREE.PlaneGeometry( 1000, 1000 ),
@@ -196,6 +248,15 @@ var ground = new Physijs.PlaneMesh(
             0
         );
 ground.rotation.x = -Math.PI / 2;
+
+
+
+light.castShadow = true;
+ground.receiveShadow = true;
+
+
+
+
 scene.add( ground );
 /*
       var geometry = new THREE.PlaneGeometry(1000, 1000);
@@ -216,6 +277,7 @@ scene.add( ground );
         targetCube.position.x = 1;
         targetCube.position.y = -1;
       
+
       ////---ROTATIONAL CUBE
 
       ///TEST PHYSICS CUBE
@@ -229,6 +291,7 @@ scene.add( ground );
 
       }
     );
+
 
 
       
@@ -259,12 +322,12 @@ scene.add( ground );
     function createCubes(){
       var numCubes = 30;
       for(var i=0;i<numCubes;i++){
+          arrayCloseObj.push(false);
            arrayObjs.push(new Physijs.BoxMesh(
-            new THREE.CubeGeometry( 7, 7, 7 ),
-            new THREE.MeshBasicMaterial({ color: 0x888888 }), 1, 0));
-          arrayObjs[i].position.set((Math.random()*400)-200, 10, (Math.random()*400)-200);
+            new THREE.CubeGeometry( 7, 7, 7 ), matNormal, 1, 0));
+          arrayObjs[i].position.set((Math.random()*300)-100, 10, (Math.random()*300)-100);
           scene.add( arrayObjs[i] );
-          raycastableObjects.push(arrayObjs[i]);
+          //raycastableObjects.push(arrayObjs[i]);
 
       }
     }
@@ -296,16 +359,22 @@ scene.add( ground );
         dist = (player.position).distanceTo(arrayObjs[i].position);
       
 
-      var matNormal = new THREE.MeshBasicMaterial({ color: 0x888888 });
-      var matNear = new THREE.MeshBasicMaterial({ color: 0xE1D46B });
+     // var matNormal = new THREE.MeshBasicMaterial({ color: 0x888888 });
+      
 
         if(dist <= distancetopick){
           found = true;
           canPick = true;
           postopick = i;
-          arrayObjs[i].material = matNear;
+          if(!arrayCloseObj[i]){
+            arrayObjs[i].material = matNear;
+          }
+          arrayCloseObj[i] = true;
         } else{
-          arrayObjs[i].material = matNormal; 
+          if(arrayCloseObj[i]){
+            arrayCloseObj[i] = false;
+            arrayObjs[i].material = matNormal; 
+          }
         }
       }
       if(!found){
