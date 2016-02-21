@@ -231,10 +231,10 @@
       texture4.repeat.set( 80, 80 );
       texture4.anisotropy = renderer.getMaxAnisotropy();
 
-var material = new THREE.MeshPhongMaterial( {
-          color: 0xdddddd,
+var material = new THREE.MeshLambertMaterial( {
+          color: 0xFFFFFF,
           specular: 0x222222,
-          shininess: 15,
+          //shininess: 15,
           map: texture2,
           aoMap : texture,
           normalMap: texture3,
@@ -276,26 +276,7 @@ scene.add( ground );
         targetCube.position.z = -12;
         targetCube.position.x = 1;
         targetCube.position.y = -1;
-      
 
-      ////---ROTATIONAL CUBE
-
-      ///TEST PHYSICS CUBE
-      // Box
-      var loader = new THREE.JSONLoader();
-        loader.load('cajafuturista.js', function ( geometry, materials ) {
-
-          mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ) );
-
-          scene.add( mesh );
-
-      }
-    );
-
-
-
-      
-      //PLAYER
 
       var playermaterial = Physijs.createMaterial(
       new THREE.Material({ transparent:true }),
