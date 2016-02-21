@@ -14,7 +14,7 @@
       var timestamp;
       var lastY;
       document.addEventListener('touchstart', function(e){
-        timestamp = Date.now;
+        timestamp = Date.now();
         console.log(e);
         force = e.touches[0].pageY;
         lastY = force;
@@ -24,7 +24,7 @@
         lastY = e.touches[0].pageY;
       });
       document.addEventListener('touchend', function(e){
-        timestamp = Date.now - timestamp;
+        timestamp = Date.now() - timestamp;
         force = Math.abs(force -lastY);
         if(parseInt(force) < 100)
           socket.emit("drop");
