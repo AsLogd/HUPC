@@ -29,7 +29,7 @@
         if(parseInt(force) < 100)
           socket.emit("drop");
         else
-          socket.emit("throw", {force: force, time: timestamp});
+          socket.emit("throw");
       }, true);
 
       var rotation = {alpha:"", beta:"", gamma:""};
