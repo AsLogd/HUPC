@@ -116,7 +116,6 @@
         if(objectPicked)
         {
           objectPicked = false;
-          canPick = true;
           scene.updateMatrixWorld();
           targetCube.updateMatrixWorld();
           var dropPosition = new THREE.Vector3();
@@ -140,7 +139,12 @@
               arrayObjs[postopick].position.copy( dropPosition);
               scene.add(arrayObjs[postopick]);
               setTimeout(function(){
-              arrayObjs[postopick].setLinearVelocity(new THREE.Vector3(90, 2, 0));
+
+                var vec = new THREE.Vector3(0,0,-1);
+                vec.applyEuler(camera.rotation,camera.eulerOrder);
+                vec.multiplyScalar(30);
+                arrayObjs[postopick].setLinearVelocity(vec);
+              //arrayObjs[postopick].setLinearVelocity(new THREE.Vector3(90, 2, 0));
 
               },10);
             }
@@ -340,7 +344,7 @@ scene.add( ground );
       var distancetopick = 13;
 
       var dist;
-      for(var i=0;i<arrayObjs.length && !canPick;i++){
+      for(var i=0;i<arrayObjs.length;i++){
         dist = (player.position).distanceTo(arrayObjs[i].position);
       
 
@@ -369,8 +373,12 @@ scene.add( ground );
 
     function animate(t) {
      // player.rotation.y = camera.rotation.y;
+      
       requestAnimationFrame(animate);
-      var vectorOK = new THREE.Vector3(-playerVector.y, 0, playerVector.x);
+      var vectorOK = new THREE.Vector3(playerVector.x, 0, playerVector.y);
+      vectorOK.normalize();
+      vectorOK.applyEuler(camera.rotation,camera.eulerOrder);
+
       vectorOK.multiplyScalar(playerSpeed);
       vectorOK.multiplyScalar(clock.getDelta());
       vectorOK.y = (player.getLinearVelocity()).y;
