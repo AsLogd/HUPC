@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		html, body {
-		    background: -webkit-linear-gradient(#F3F3F3, #A6C6CE);
-    		color: #252525;
+		    background: -webkit-linear-gradient(#ddd, #efefef);
+    		color: #f1f1f1;
 			height: 100%;
 			font-size: 24px;
 			font-family: 'PT Sans', sans-serif;
@@ -19,35 +19,51 @@
 		}
 		main div{
 			display: flex;
-			align-items: center;
-			justify-content: center;
-			flex:1 1 auto;
-			padding: 30px 0px;
-		    background: -webkit-linear-gradient(#BBBBF3, #8EA8B7);
+		    align-items: center;
+		    justify-content: center;
+		    flex: 1 1 auto;
+		    padding: 10px 0px;
+		    background: #9fd148;
 		    margin: 5px;
-		    border: thin solid #EDEDF9;
 		    transition: all 200ms;
+		}
+		main div div{
+			display:flex;
+			justify-content:center;
+			flex: 2 1 auto;
+		}
+		main div img{
+			flex:1 1 auto;
+			width:20px;
+			margin:0 20px;
 		}
 		main div:active{
 			background:white;
+			color:black;
 		}
 		div.logo{
 			width:100%;
 			text-align:center;
-			margin: 15px 0;
+			margin: 20px 0;
+		}
+		div.logo img{
+			width:80%;
 		}
 	</style>
   </head>
   <body> 
 	  <main>
 		<div onclick="location.href='display'" >
-			Display
+			<img src="textures/cardboard"/>
+			<div>DISPLAY</div>
 		</div>
 		<div onclick="location.href='move'">
-			Movement
+			<img src="textures/38-512.png"/>
+			<div>MOVEMENT</div>
 		</div>
 		<div onclick="location.href='vhand'">
-			Virtual Hand
+			<img src="textures/hand.png"/>
+			<div>VIRTUAL HAND</div>
 		</div>
 	</main>
 	<div class="logo">
