@@ -127,17 +127,17 @@
         }
       });
 
-      socket.on("throw", function(){
+      socket.on("throw", function(force, time){
             if(objectPicked){
-              objectPicked = false;
-              scene.updateMatrixWorld();
-          targetCube.updateMatrixWorld();
-          var dropPosition = new THREE.Vector3();
-          dropPosition.setFromMatrixPosition(arrayObjs[postopick].matrixWorld);
-          targetCube.remove(arrayObjs[postopick]);
-          arrayObjs[postopick].position.copy( dropPosition);
-          scene.add(arrayObjs[postopick]);
-          objtopick.addCentralImpulse(new THREE.Vector3(100, 2, 0));;
+                  objectPicked = false;
+                  scene.updateMatrixWorld();
+              targetCube.updateMatrixWorld();
+              var dropPosition = new THREE.Vector3();
+              dropPosition.setFromMatrixPosition(arrayObjs[postopick].matrixWorld);
+              targetCube.remove(arrayObjs[postopick]);
+              arrayObjs[postopick].position.copy( dropPosition);
+              scene.add(arrayObjs[postopick]);
+              objtopick.addCentralImpulse(new THREE.Vector3(100, 2, 0));
             }
           });
       Physijs.scripts.worker = '/js/physijs_worker.js';
