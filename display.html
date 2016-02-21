@@ -115,6 +115,7 @@
         if(objectPicked)
         {
           objectPicked = false;
+          canPick = false;
           scene.updateMatrixWorld();
           targetCube.updateMatrixWorld();
           var dropPosition = new THREE.Vector3();
@@ -157,7 +158,7 @@
       scene = new Physijs.Scene;
       scene.setGravity(new THREE.Vector3(0,-100,0));
       scene.add(new THREE.AxisHelper() );
-      scene.fog = new THREE.FogExp2(0x000000, 0.007);
+      scene.fog = new THREE.FogExp2(0x000000, 0.004);
       camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
       camera.position.set(0, 10, 0);
       scene.add(camera);
@@ -335,7 +336,6 @@ scene.add( ground );
       var distancetopick = 13;
 
       var dist;
-      var found = false;
       for(var i=0;i<arrayObjs.length && !canPick;i++){
         dist = (player.position).distanceTo(arrayObjs[i].position);
       
@@ -344,7 +344,6 @@ scene.add( ground );
       
 
         if(dist <= distancetopick){
-          found = true;
           canPick = true;
           postopick = i;
           if(!arrayCloseObj[i]){
@@ -357,9 +356,6 @@ scene.add( ground );
             arrayObjs[i].material = matNormal; 
           }
         }
-      }
-      if(!found){
-        canPick = false;
       }
     }
 
