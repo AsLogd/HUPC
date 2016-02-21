@@ -129,7 +129,7 @@
         }
       });
 
-      socket.on("throw", function(force, time){
+      socket.on("throw", function(obj){
             if(objectPicked){
                   objectPicked = false;
                   scene.updateMatrixWorld();
@@ -139,7 +139,10 @@
               targetCube.remove(arrayObjs[postopick]);
               arrayObjs[postopick].position.copy( dropPosition);
               scene.add(arrayObjs[postopick]);
-              objtopick.addCentralImpulse(new THREE.Vector3(100, 2, 0));
+              setTimeout(function(){
+              arrayObjs[postopick].setLinearVelocity(new THREE.Vector3(90, 2, 0));
+
+              },10);
             }
           });
       Physijs.scripts.worker = '/js/physijs_worker.js';

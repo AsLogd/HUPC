@@ -41,8 +41,8 @@ io.on('connection', function(socket){
     console.log('Recibido: drop');
     socket.broadcast.emit("drop");
   });
-   socket.on('throw', function(obj){
-    console.log('Recibido: ' + obj.force + ", " + obj.time);
+   socket.on('throw', function(){
+    console.log('Recibido: throw');
     socket.broadcast.emit("throw");
   });
 
