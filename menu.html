@@ -6,30 +6,47 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<style>
 		html, body {
+		    background: -webkit-linear-gradient(#F3F3F3, #A6C6CE);
+    		color: #252525;
 			height: 100%;
 			font-size: 24px;
 			font-family: 'PT Sans', sans-serif;
+		}
+		main{
+			display:flex;
+			flex-wrap:wrap;
+
+		}
+		main div{
+			flex:1 1 auto;
+			padding: 30px 0px;
+		    background: -webkit-linear-gradient(#BBBBF3, #8EA8B7);
+		    margin: 5px;
+		    border: thin solid #EDEDF9;
+		    transition: all 200ms;
+		}
+		main div:active{
+			background:white;
 		}
 		div{
 			display: flex;
 			align-items: center;
 			justify-content: center;
 		}
-		.option{
-			height : 33%;			
-		}
 	</style>
   </head>
   <body> 
-	<div class="option" onclick="location.href='receiver.html'" >
-		Visor
-	</div>
-	<div class="option" onclick="location.href='move.html'">
-		Movimiento
-	</div>
-	<div class="option" onclick="location.href='sender.html'">
-		Interacción
-	</div>
-	
+	  <main>
+		<div onclick="location.href='display.html'" >
+			Display
+		</div>
+		<div onclick="location.href='move.html'">
+			Movement
+		</div>
+		<div onclick="location.href='vhand.html'">
+			Virtual Hand
+		</div>
+	</main>
+	<img src="public/img/logo.png"/>
   </body>
  </html>

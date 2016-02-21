@@ -244,6 +244,18 @@ scene.add( ground );
         player.add(camera);
         player.setAngularFactor(new THREE.Vector3(0,0,0));
 
+		loader.load('models/cajafuturista.js', function (geometry) {
+			var material = new THREE.MeshLambertMaterial();
+			var mesh = new THREE.Mesh(
+				geometry,
+				material
+			);
+			mesh.rotation.y = -Math.PI/5;
+			mesh.position.set(-5,5,-5)
+			//mesh.scale.set(1.3,1.3,1.3)
+			scene.add(mesh);
+			}
+		);
 
 
       window.addEventListener('resize', resize, false);
